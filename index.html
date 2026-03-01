@@ -207,18 +207,20 @@
       doc.text('Ph: ' + toPhone, pad, y);
       y += 28;
 
+      const dividerY = y + 14;
+
       // ── DASHED DIVIDER ──
       doc.setDrawColor(180, 180, 180);
       doc.setLineWidth(0.8);
       doc.setLineDash([5, 4]);
       doc.line(pad - 2, dividerY, W - pad + 2, dividerY);
       doc.setLineDash([]);
+
       // ── TAGLINE ──
       doc.setFont('helvetica', 'italic');
-      doc.setFontSize(6);
+      doc.setFontSize(9);
       doc.setTextColor(160, 120, 60);
-       doc.text('"Bringing Comfort to your Doorstep \u2665"', W / 2, y + 14, { align: 'center' });
-      const dividerY = y + 28;
+      doc.text('"Bringing Comfort to your Doorstep \u2665"', W / 2, dividerY + 18, { align: 'center' });
 
       // ── FROM (pinned near bottom) ──
       const fromNameLines = doc.splitTextToSize(fromName, W - pad * 2);
