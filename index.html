@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shipping Label Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+    }
+
+    /* ── BRAND SELECTION SCREEN ── */
+    #brandScreen {
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+    }
+    #brandScreen h1 {
+      font-size: 1.6rem;
+      color: #1a202c;
+      margin-bottom: 8px;
+    }
+    #brandScreen p {
+      color: #718096;
+      font-size: 0.95rem;
+      margin-bottom: 36px;
+    }
+    .brand-cards {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .brand-card {
+      background: white;
+      border: 2.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 28px 24px;
+      width: 210px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    .brand-card:hover {
+      border-color: #4299e1;
+      box-shadow: 0 6px 24px rgba(66,153,225,0.18);
+      transform: translateY(-3px);
+    }
+    .brand-card img {
+      width: 100%;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 16px;
+      border-radius: 8px;
+    }
+    .brand-card .brand-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 4px;
+    }
+    .brand-card .brand-sub {
+      font-size: 0.8rem;
+      color: #a0aec0;
+    }
+
+    /* ── FORM SCREEN ── */
+    #formScreen { display: none; width: 100%; max-width: 480px; }
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      padding: 36px 32px;
+    }
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 6px;
+    }
+    .brand-header img {
+      height: 44px;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+    .brand-header h1 {
+      font-size: 1.4rem;
+      color: #1a202c;
+    }
+    p.sub { color: #718096; font-size: 0.9rem; margin-bottom: 6px; }
+    .change-brand {
+      background: none;
+      border: none;
+      color: #4299e1;
+      font-size: 0.82rem;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 24px;
+      text-decoration: underline;
+    }
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #4a5568;
+      margin-bottom: 10px;
+      margin-top: 22px;
+    }
+    .section-title:first-of-type { margin-top: 0; }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: #4a5568;
+      margin-bottom: 4px;
+      margin-top: 12px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #1a202c;
+      transition: border 0.2s;
+      outline: none;
+      background: #f7fafc;
+    }
+    input:focus, textarea:focus { border-color: #4299e1; background: white; }
+    input:read-only { background: #edf2f7; color: #718096; cursor: not-allowed; }
+    textarea { resize: vertical; min-height: 70px; }
+    .divider { border: none; border-top: 1.5px dashed #e2e8f0; margin: 24px 0 10px; }
+    .btn {
+      margin-top: 28px;
+      width: 100%;
+      padding: 13px;
+      background: #2b6cb0;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .btn:hover { background: #2c5282; }
+    .btn:active { background: #1a365d; }
+  </style>
+</head>
+<body>
+
+  <!-- BRAND SELECTION -->
+  <div id="brandScreen">
+    <h1>📦 Shipping Label Generator</h1>
+    <p>Select your brand to get started</p>
+    <div class="brand-cards">
+      <div class="brand-card" onclick="selectBrand('DecorFirst', '9034366104', 'decorfirst')">
+        <img src="decorfirst.jpg" alt="DecorFirst" onerror="this.style.display='none'" />
+        <div class="brand-name">DecorFirst</div>
+        <div class="brand-sub">Click to select</div>
+      </div>
+      <div class="brand-card" onclick="selectBrand('AKX Brand', '8607966104', 'akxbrand')">
+        <img src="akxbrand.jpg" alt="AKX Brand" onerror="this.style.display='none'" />
+        <div class="brand-name">AKX Brand</div>
+        <div class="brand-sub">Click to select</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div id="formScreen">
+    <div class="container">
+      <div class="brand-header">
+        <img id="brandLogo" src="" alt="Brand Logo" />
+        <h1 id="brandTitle">Shipping Label</h1>
+      </div>
+      <p class="sub">Fill in recipient details to generate label.</p>
+      <button class="change-brand" onclick="goBack()">← Change Brand</button>
+
+      <div class="section-title">📬 To (Recipient)</div>
+      <label>Name</label>
+      <input type="text" id="toName" placeholder="e.g. Rahul Sharma" />
+      <label>Address</label>
+      <textarea id="toAddress" placeholder="e.g. 42, MG Road, Bengaluru, Karnataka"></textarea>
+      <label>Pin Code</label>
+      <input type="text" id="toPin" placeholder="e.g. 560001" maxlength="10" />
+      <label>Phone Number</label>
+      <input type="tel" id="toPhone" placeholder="e.g. +91 98765 43210" />
+
+      <hr class="divider"/>
+
+      <div class="section-title">🏠 From (Sender)</div>
+      <label>Name</label>
+      <input type="text" id="fromName" readonly />
+      <label>Phone Number</label>
+      <input type="tel" id="fromPhone" readonly />
+
+      <button class="btn" onclick="generateLabel()">🖨️ Generate & Download Label</button>
+    </div>
+  </div>
+
+  <script>
+    let selectedLogoFile = '';
+
+    function selectBrand(name, phone, logoFile) {
+      selectedLogoFile = logoFile;
+      document.getElementById('fromName').value  = name;
+      document.getElementById('fromPhone').value = phone;
+      document.getElementById('brandTitle').textContent = name;
+      document.getElementById('brandLogo').src = logoFile + '.jpg';
+      document.getElementById('brandScreen').style.display = 'none';
+      document.getElementById('formScreen').style.display = 'block';
+    }
+
+    function goBack() {
+      document.getElementById('formScreen').style.display = 'none';
+      document.getElementById('brandScreen').style.display = 'block';
+      // Clear to fields
+      ['toName','toAddress','toPin','toPhone'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    function generateLabel() {
+      const toName    = document.getElementById('toName').value.trim();
+      const toAddress = document.getElementById('toAddress').value.trim();
+      const toPin     = document.getElementById('toPin').value.trim();
+      const toPhone   = document.getElementById('toPhone').value.trim();
+      const fromName  = document.getElementById('fromName').value.trim();
+      const fromPhone = document.getElementById('fromPhone').value.trim();
+
+      if (!toName || !toAddress || !toPin || !toPhone) {
+        alert('Please fill in all recipient fields before generating the label.');
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: [288, 432] });
+
+      const W = 288, H = 432, pad = 20, halfH = H / 2;
+
+      doc.setFillColor(255, 255, 255);
+      doc.rect(0, 0, W, H, 'F');
+      doc.setDrawColor(80, 80, 80);
+      doc.setLineWidth(1.5);
+      doc.rect(6, 6, W - 12, H - 12);
+
+      // Try to embed logo
+      const logoImg = document.getElementById('brandLogo');
+      let logoLoaded = logoImg && logoImg.complete && logoImg.naturalWidth > 0;
+
+      if (logoLoaded) {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = logoImg.naturalWidth;
+          canvas.height = logoImg.naturalHeight;
+          canvas.getContext('2d').drawImage(logoImg, 0, 0);
+          const imgData = canvas.toDataURL('image/jpeg');
+          // Logo top-right corner
+          const logoH = 28, logoW = 60;
+          doc.addImage(imgData, 'JPEG', W - pad - logoW, 10, logoW, logoH);
+        } catch(e) { /* skip if CORS issue */ }
+      }
+
+      // ── SHIP TO ──
+      doc.setTextColor(130, 130, 130);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.text('SHIP TO', pad, 28);
+
+      doc.setTextColor(10, 10, 10);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(22);
+      const toNameLines = doc.splitTextToSize(toName, W - pad * 2);
+      doc.text(toNameLines, pad, 52);
+      let y = 52 + toNameLines.length * 26;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(50, 50, 50);
+      const addrLines = doc.splitTextToSize(toAddress, W - pad * 2);
+      doc.text(addrLines, pad, y);
+      y += addrLines.length * 14 + 6;
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(20, 20, 20);
+      doc.text('PIN: ' + toPin, pad, y);
+      y += 16;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(50, 50, 50);
+      doc.text('Ph: ' + toPhone, pad, y);
+
+      // ── TAGLINE ──
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(9);
+      doc.setTextColor(160, 120, 60);
+      doc.text('"Bringing Comfort to your Doorstep"', W / 2, halfH - 10, { align: 'center' });
+
+      // ── DASHED DIVIDER ──
+      doc.setDrawColor(180, 180, 180);
+      doc.setLineWidth(0.8);
+      doc.setLineDash([5, 4]);
+      doc.line(pad - 4, halfH, W - pad + 4, halfH);
+      doc.setLineDash([]);
+
+      // ── FROM SECTION (pinned near bottom) ──
+      const fromNameLines = doc.splitTextToSize(fromName, W - pad * 2);
+      const nameBlockH = fromNameLines.length * 16;
+      const totalFromH = 12 + nameBlockH + 6 + 13;
+      let yFrom = H - totalFromH - 16;
+
+      doc.setTextColor(130, 130, 130);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.text('FROM', pad, yFrom);
+      yFrom += 14;
+
+      doc.setTextColor(10, 10, 10);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(13);
+      doc.text(fromNameLines, pad, yFrom);
+      yFrom += nameBlockH + 6;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(50, 50, 50);
+      doc.text('Ph: ' + fromPhone, pad, yFrom);
+
+      doc.save('shipping-label.pdf');
+    }
+  </script>
+</body>
+</html>
