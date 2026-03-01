@@ -220,10 +220,10 @@
       doc.setFont('helvetica', 'italic');
       doc.setFontSize(8); // slightly smaller font
       doc.setTextColor(0, 0, 0); // black color
-      doc.text('Bringing Comfort to your Doorstep', pad, dividerY + 18);
+      doc.text('Bringing Comfort to your Doorstep', W / 2, dividerY + 18, { align: 'center' });
 
       // Draw small filled heart after text
-      const hx = pad + doc.getTextWidth('Bringing Comfort to your Doorstep')/2 + 4;
+      const hx = W / 2 + doc.getTextWidth('Bringing Comfort to your Doorstep') / 2 + 4;
       const hy = dividerY + 13;
       const hs = 4;
       doc.setFillColor(0, 0, 0);
