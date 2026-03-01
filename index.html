@@ -220,7 +220,7 @@
       doc.setFont('helvetica', 'italic');
       doc.setFontSize(8); // slightly smaller font
       doc.setTextColor(0, 0, 0); // black color
-      doc.text('"Bringing Comfort to your Doorstep ♥"', W / 2, dividerY + 18, { align: 'center' });
+      doc.text('"Bringing Comfort to your Doorstep \u2665"', pad, dividerY + 18);
 
       // ── FROM (pinned near bottom) ──
       const fromNameLines = doc.splitTextToSize(fromName, W - pad * 2);
