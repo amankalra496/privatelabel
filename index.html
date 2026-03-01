@@ -220,7 +220,16 @@
       doc.setFont('helvetica', 'italic');
       doc.setFontSize(8); // slightly smaller font
       doc.setTextColor(0, 0, 0); // black color
-      doc.text('Bringing Comfort to your Doorstep \u2764', pad, dividerY + 18);
+      doc.text('Bringing Comfort to your Doorstep', pad, dividerY + 18);
+
+      // Draw small filled heart after text
+      const hx = pad + doc.getTextWidth('Bringing Comfort to your Doorstep') + 4;
+      const hy = dividerY + 13;
+      const hs = 4;
+      doc.setFillColor(0, 0, 0);
+      doc.circle(hx, hy, hs / 2, 'F');
+      doc.circle(hx + hs, hy, hs / 2, 'F');
+      doc.triangle(hx - hs / 2, hy + 1, hx + hs * 1.5, hy + 1, hx + hs / 2, hy + hs + 1, 'F');
       
       // ── FROM (pinned near bottom) ──
       const fromNameLines = doc.splitTextToSize(fromName, W - pad * 2);
